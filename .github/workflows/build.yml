@@ -1,0 +1,47 @@
+name: Build kernel rpms
+on:
+  workflow_dispatch:
+  push:
+    tags:
+    - '*'
+jobs:
+  build:
+    # sudo in build fails on 24.04
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Fetch Qubes Builder V2
+      uses: actions/checkout@v4
+      with:
+        repository: QubesOS/qubes-builderv2
+        path: qubes-builderv2
+    - name: Init Qubes Builder V2 submodules
+      run: |
+        cd qubes-builderv2
+        git submodule update --init
+    - name: Copy builder to qubes builder v2 directory
+      run: cp builder.yml qubes-builderv2/
+    - name: Install dependencies
+      run: |
+        sudo apt-get update && sudo apt-get install -y createrepo-c devscripts mktorrent reprepro sq sqv
+        pip install click docker lxml packaging pathspec python-dateutil pyyaml setuptools
+    - name: Setup gpg key
+      run: |
+        mkdir -p qubes-builderv2/artifacts/gpg-keys
+        curl -Lo qubes-builderv2/artifacts/gpg-keys/513D956F446D2B77252BB8BD3AFB65F1696D5ED8.asc https://github.com/burnskp.gpg
+    - name: Build linux-intel-lts kernel
+      run: |
+        cd qubes-builderv2
+        ./qb -c linux-intel-lts-kernel package fetch prep build
+    - name: Upload artifacts to GitHub Release
+      if: github.ref_type == 'tag'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: qubes-builderv2/artifacts/repository/**

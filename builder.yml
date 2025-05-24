@@ -1,0 +1,30 @@
+key-dirs:
+- artifacts/gpg-keys
+skip-git-fetch: true
+backend-vmm: xen
+debug: true
+verbose: true
+qubes-release: r4.2
+use-qubes-repo:
+  version: 4.2
+distributions:
+- host-fc37
+- vm-bookworm
+- vm-fc41
+components:
+- linux-intel-lts-kernel:
+    url: https://github.com/burnskp/qubes-linux-kernel-intel
+    branch: stable-6.12
+    timeout: 21600
+    maintainers:
+    - '513D956F446D2B77252BB8BD3AFB65F1696D5ED8'
+executor:
+  type: docker
+  options:
+    image: "registry.gitlab.com/qubesos/docker-images/qubes-builder-fedora:latest"
+stages:
+- fetch
+- prep
+- build
+- post
+- verify

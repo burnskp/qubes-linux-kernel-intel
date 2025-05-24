@@ -6,15 +6,11 @@
 %define plainrel @REL@
 %define version %(echo '@VERSION@' | sed 's/-rc.*//')
 %define upstream_version @VERSION@
-%if "%{version}" != "%{upstream_version}"
-%define prerelease 1
-%define rel 0.%(echo '@VERSION@' | sed 's/.*-rc/rc/').%{plainrel}.%{variant}%{?dist}
-%else
+%define git_sha db87f2543ee06d2205de59af5647c06e9d2fa0bc
 %define prerelease 0
 %define rel %{plainrel}.%{variant}%{?dist}
-%endif
 
-#%%define name_suffix -latest
+%define name_suffix -intel-lts
 
 %define _buildshell /bin/bash
 %define build_xen       1
@@ -22,10 +18,10 @@
 %global cpu_arch x86_64
 %define cpu_arch_flavor %cpu_arch
 
-%define kernelrelease %(echo %{upstream_version} | sed 's/^[0-9]\\.[0-9]\\+$/\\0.0/;s/-rc.*/.0/')-%rel.%cpu_arch
+%define kernelrelease %(echo %{version} | sed 's/^[0-9]\\.[0-9]\\+$/\\0.0/;s/-rc.*/.0/')-%rel.%cpu_arch
 %define my_builddir %_builddir/%{name}-%{version}
 
-%define build_src_dir %my_builddir/linux-%upstream_version
+%define build_src_dir %my_builddir/linux%name_suffix
 %define src_install_dir /usr/src/kernels/%kernelrelease
 %define kernel_build_dir %my_builddir/linux-obj
 %define vm_install_dir /var/lib/qubes/vm-kernels/%upstream_version-%{plainrel}%{?dist}
@@ -117,7 +113,7 @@ Provides:       kernel-uname-r = %kernelrelease
 
 ExclusiveArch:  x86_64
 
-Source0:        linux-%{upstream_version}.tar
+Source0:        linux%{name_suffix}-%{git_sha}.tar.gz
 Source1:        @dummy-psu@
 Source2:        @dummy-backlight@
 Source3:        @linux-utils@
@@ -175,7 +171,7 @@ export LINUX_UPSTREAM_VERSION=%{upstream_version}
 
 mkdir -p %kernel_build_dir
 
-cd linux-%upstream_version
+cd linux%name_suffix
 %autopatch -p1
 
 # drop EXTRAVERSION - possible -rc suffix already included in %release
