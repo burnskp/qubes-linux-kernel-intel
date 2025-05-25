@@ -2,7 +2,7 @@
 # Based on the Open SUSE kernel-spec & Fedora kernel-spec.
 #
 
-%define variant qubes
+%define variant intel
 %define plainrel @REL@
 %define version %(echo '@VERSION@' | sed 's/-rc.*//')
 %define upstream_version @VERSION@
