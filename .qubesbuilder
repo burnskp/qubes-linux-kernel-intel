@@ -10,4 +10,4 @@ source:
   - v4l2loopback
   files:
   - git-url: https://github.com/intel/linux-intel-lts.git
-    commit-id: 99b830e9d68a5a759f85fa8af9ba0348adfcd6c9
+    commit-id: 1bf756d203f0eda10f0d59adc5eb4afc06bc8810

@@ -6,7 +6,7 @@
 %define plainrel @REL@
 %define version %(echo '@VERSION@' | sed 's/-rc.*//')
 %define upstream_version @VERSION@
-%define git_sha 99b830e9d68a5a759f85fa8af9ba0348adfcd6c9
+%define git_sha 1bf756d203f0eda10f0d59adc5eb4afc06bc8810
 %define prerelease 0
 %define rel %{plainrel}.%{variant}%{?dist}
 
