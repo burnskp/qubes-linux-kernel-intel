@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
-      contents: read
+      contents: write
       attestations: write
       packages: write
     steps:
